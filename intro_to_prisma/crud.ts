@@ -1,25 +1,26 @@
 import { prisma } from "./lib/prisma";
 
 async function run() {
-  //   const cerateUser = await prisma.user.create({
-  //     data: {
-  //       name: "Sahanur Eva",
-  //       email: "eva@gmail.com",
-  //     },
-  //   });
-  //   const createPost = await prisma.post.create({
-  //     data: {
-  //       title: "Why you get married first",
-  //       content: "getting married  helps you",
-  //       authorId: 1,
-  //     },
-  //   });
-  const createProfile = await prisma.profile.create({
-    data: {
-      bio: "this is dev at programming hero",
+  // update user data
+  const updateUser = await prisma.profile.update({
+    where: {
       userId: 1,
     },
+    data: {
+      bio: "we are going to get married in feb",
+    },
+    select: {
+      id: true,
+      bio: true,
+      user: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+    },
   });
-  console.log("Created profile", createProfile);
+
+  console.log("users", updateUser);
 }
 run();
