@@ -21,10 +21,12 @@ model Post{
   status PostStatus @default(PUBLISHED)
   tags String[]
   views Int @default(0)
-  authorId String
+  authorId String // will be managed by better auth
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  comment Comment[]
+  comments Comment[]
+  @@index([authorId])
+  @@map("posts")
 
 }
 
@@ -36,8 +38,14 @@ model Comment{
   authorId String
   parentId String?
   postId String
+  parent Comment? @relation( name: "CommentToComment",fields: [parentId],references: [id])
+  replies Comment[] @relation(name: "CommentToComment")
   post Post @relation(fields: [postId],references: [id])
   status CommentStatus @default(APPROVED)
+  @@index([postId])
+  @@index([authorId])
+  @@map("comments")
+  
 }
 
 enum PostStatus {
