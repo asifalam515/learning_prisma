@@ -7,4 +7,8 @@ const createPostInDb = async (
   const result = await prisma.post.create({ data });
   return result;
 };
-export const postService = { createPostInDb };
+const getPostsFromDB = async () => {
+  const result = await prisma.post.findMany();
+  return result;
+};
+export const postService = { createPostInDb, getPostsFromDB };
