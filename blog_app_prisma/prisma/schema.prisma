@@ -12,40 +12,41 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-model Post{
-  id String @id @default(uuid())
-  title String @db.VarChar(225)
-  content String @db.Text
-  thumbnail String?
-  isFeatured Boolean @default(false)
-  status PostStatus @default(PUBLISHED)
-  tags String[]
-  views Int @default(0)
-  authorId String // will be managed by better auth
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  comments Comment[]
+
+model Post {
+  id         String     @id @default(uuid())
+  title      String     @db.VarChar(225)
+  content    String     @db.Text
+  thumbnail  String?
+  isFeatured Boolean    @default(false)
+  status     PostStatus @default(PUBLISHED)
+  tags       String[]
+  views      Int        @default(0)
+  authorId   String // will be managed by better auth
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  comments   Comment[]
+
   @@index([authorId])
   @@map("posts")
-
 }
 
-model Comment{
-  id String @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  content String @db.Text
-  authorId String
-  parentId String?
-  postId String
-  parent Comment? @relation( name: "CommentToComment",fields: [parentId],references: [id])
-  replies Comment[] @relation(name: "CommentToComment")
-  post Post @relation(fields: [postId],references: [id])
-  status CommentStatus @default(APPROVED)
+model Comment {
+  id        String        @id @default(uuid())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  content   String        @db.Text
+  authorId  String
+  parentId  String?
+  postId    String
+  parent    Comment?      @relation(name: "CommentToComment", fields: [parentId], references: [id])
+  replies   Comment[]     @relation(name: "CommentToComment")
+  post      Post          @relation(fields: [postId], references: [id])
+  status    CommentStatus @default(APPROVED)
+
   @@index([postId])
   @@index([authorId])
   @@map("comments")
-  
 }
 
 enum PostStatus {
@@ -58,4 +59,67 @@ enum PostStatus {
 enum CommentStatus {
   APPROVED
   REJECT
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }
