@@ -10,7 +10,7 @@ app.use(express.json());
 app.use("/posts", postRouter);
 app.use(
   cors({
-    origin: "http://localhost:3000/", // Replace with your frontend's origin
+    origin: "http://localhost:4000/", // Replace with your frontend's origin
     methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed HTTP methods
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   })
