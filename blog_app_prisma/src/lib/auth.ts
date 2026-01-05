@@ -15,10 +15,12 @@ const transporter = nodemailer.createTransport({
 });
 export const auth = betterAuth({
   emailVerification: {
+    sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
-      const verificationUrl = `${process.env.APP_URL}/verify-email?token=${token}`;
-      // html template for email verification
-      const html = `
+      try {
+        const verificationUrl = `${process.env.APP_URL}/verify-email?token=${token}`;
+        // html template for email verification
+        const html = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -104,15 +106,18 @@ export const auth = betterAuth({
 </html>
 `;
 
-      const info = await transporter.sendMail({
-        from: '"Prisma Blog" <prismablog@gmail.com>',
-        to: user.email,
-        subject: "Verify your email address",
-        text: "Hello world?", // Plain-text version of the message
-        html: html, // HTML version of the message
-      });
-
-      console.log("Message sent:", info.messageId);
+        const info = await transporter.sendMail({
+          from: '"Prisma Blog" <prismablog@gmail.com>',
+          to: user.email,
+          subject: "Verify your email address",
+          text: "Hello world?", // Plain-text version of the message
+          html: html, // HTML version of the message
+        });
+        console.log("Message Sent: ", info.messageId);
+      } catch (error: any) {
+        console.log(error);
+        throw error;
+      }
     },
   },
   emailAndPassword: {
