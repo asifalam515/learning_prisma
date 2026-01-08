@@ -16,7 +16,6 @@ app.use(
   })
 );
 app.get("/", (req, res) => {
-  res.send("hello world");
-  console.log("first application running");
+  console.log("project started !!!");
 });
 export default app;
