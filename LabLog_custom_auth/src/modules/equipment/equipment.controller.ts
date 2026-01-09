@@ -13,6 +13,18 @@ const createEquipment: RequestHandler = async (req: Request, res: Response) => {
   }
 };
 
+const getEquipment = async (req: Request, res: Response) => {
+  try {
+    const data = await prisma.equipment.findMany();
+    res.send({
+      message: "get all equipment",
+      data: data,
+    });
+  } catch (error: any) {
+    console.error(error);
+  }
+};
 export const equipmentController = {
   createEquipment,
+  getEquipment,
 };
