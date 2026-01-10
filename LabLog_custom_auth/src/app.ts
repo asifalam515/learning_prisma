@@ -9,12 +9,12 @@ import routes from "./modules/user/routes";
 const app = express();
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000", // Replace with your frontend's origin
+    origin: process.env.FRONTEND_URL,
 
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   })
 );
-app.all("/api/auth/*", toNodeHandler(auth));
+app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use(express.json());
 app.use("/api/v1", routes);

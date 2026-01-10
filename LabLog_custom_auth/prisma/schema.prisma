@@ -31,6 +31,7 @@ model Equipment {
   updatedAt  DateTime   @updatedAt
   // relations
   usagesLogs UsageLog[]
+  @@map("equipment")
 }
 
 model UsageLog {
@@ -47,6 +48,7 @@ model UsageLog {
   // one to many
   // equipment
   equipment   Equipment @relation(fields: [equipmentId], references: [id])
+  @@map("usageLog")
 }
 
 model User {
