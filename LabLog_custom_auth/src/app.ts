@@ -20,5 +20,15 @@ app.use(express.json());
 app.use("/api/v1", routes);
 app.use("/api/v1/equipment", equipmentRouter);
 app.use("/api/v1/usageLog", logRouter);
+async function createAdmin() {
+  await auth.api.createUser({
+    body: {
+      name: "Asif",
+      email: "asibulalam515@gmail.com",
+      password: "password1234",
+      role: "admin",
+    },
+  });
+}
 
 export default app;
