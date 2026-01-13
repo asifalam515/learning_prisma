@@ -14,40 +14,48 @@ const createPostInDb = async (
   });
   return result;
 };
-const getPostsFromDB = async (payload: {
+const getPostsFromDB = async ({
+  search,
+  tags,
+  isFeatured,
+}: {
   search: string | undefined;
   tags: string[] | [];
+  isFeatured: Boolean;
 }) => {
   const andConditions: PostWhereInput[] = [];
-  if (payload.search) {
+  if (search) {
     andConditions.push({
       OR: [
         {
           title: {
-            contains: payload.search as string,
+            contains: search as string,
             mode: "insensitive",
           },
         },
         {
           content: {
-            contains: payload.search as string,
+            contains: search as string,
             mode: "insensitive",
           },
         },
         {
           tags: {
-            has: payload.search as string,
+            has: search as string,
           },
         },
       ],
     });
   }
-  if (payload.tags.length > 0) {
+  if (tags.length > 0) {
     andConditions.push({
       tags: {
-        hasEvery: payload.tags as string[],
+        hasEvery: tags as string[],
       },
     });
+  }
+  if (typeof isFeatured === "boolean") {
+    andConditions.push({ isFeatured: isFeatured });
   }
   const result = await prisma.post.findMany({
     where: {
