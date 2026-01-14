@@ -21,7 +21,7 @@ const getPostsFromDB = async ({
 }: {
   search: string | undefined;
   tags: string[] | [];
-  isFeatured: Boolean;
+  isFeatured: Boolean | undefined;
 }) => {
   const andConditions: PostWhereInput[] = [];
   if (search) {
@@ -55,7 +55,7 @@ const getPostsFromDB = async ({
     });
   }
   if (typeof isFeatured === "boolean") {
-    andConditions.push({ isFeatured: isFeatured });
+    andConditions.push({ isFeatured });
   }
   const result = await prisma.post.findMany({
     where: {
