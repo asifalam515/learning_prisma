@@ -1,6 +1,7 @@
 import { Post } from "../../../generated/prisma/client";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
+import { PostStatus } from "./../../../generated/prisma/enums";
 
 const createPostInDb = async (
   data: Omit<Post, "id" | "createdAt" | "updatedAt" | "authorId">,
@@ -18,10 +19,14 @@ const getPostsFromDB = async ({
   search,
   tags,
   isFeatured,
+  status,
+  authorId,
 }: {
   search: string | undefined;
   tags: string[] | [];
   isFeatured: Boolean | undefined;
+  status: PostStatus | undefined;
+  authorId: string | undefined;
 }) => {
   const andConditions: PostWhereInput[] = [];
   if (search) {
@@ -57,11 +62,21 @@ const getPostsFromDB = async ({
   if (typeof isFeatured === "boolean") {
     andConditions.push({ isFeatured });
   }
-  const result = await prisma.post.findMany({
+  if (status) {
+    andConditions.push({
+      status,
+    });
+  }
+  if (authorId) {
+    andConditions.push({
+      authorId,
+    });
+  }
+  const allPost = await prisma.post.findMany({
     where: {
       AND: andConditions,
     },
   });
-  return result;
+  return allPost;
 };
 export const postService = { createPostInDb, getPostsFromDB };
