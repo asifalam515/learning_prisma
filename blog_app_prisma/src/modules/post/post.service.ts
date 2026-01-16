@@ -108,4 +108,16 @@ const getPostsFromDB = async ({
     },
   };
 };
-export const postService = { createPostInDb, getPostsFromDB };
+const getPostByIdFromDB = async (postId: string) => {
+  const user = await prisma.post.findUnique({
+    where: {
+      id: postId,
+    },
+  });
+  return user;
+};
+export const postService = {
+  createPostInDb,
+  getPostsFromDB,
+  getPostByIdFromDB,
+};
