@@ -43,12 +43,19 @@ const getAllPosts = async (req: Request, res: Response) => {
           ? false
           : undefined
         : undefined;
+
+    // pagination
+    const page = Number(req.query.page ?? 1);
+    const limit = Number(req.query.limit ?? 10);
+
     const result = await postService.getPostsFromDB({
       search: searchString,
       tags,
       isFeatured,
       status,
       authorId,
+      page,
+      limit,
     });
     res.status(200).json({
       message: "get all data",

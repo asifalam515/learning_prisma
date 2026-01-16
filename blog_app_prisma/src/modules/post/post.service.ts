@@ -21,12 +21,16 @@ const getPostsFromDB = async ({
   isFeatured,
   status,
   authorId,
+  page,
+  limit,
 }: {
   search: string | undefined;
   tags: string[] | [];
   isFeatured: Boolean | undefined;
   status: PostStatus | undefined;
   authorId: string | undefined;
+  page: number;
+  limit: number;
 }) => {
   const andConditions: PostWhereInput[] = [];
   if (search) {
