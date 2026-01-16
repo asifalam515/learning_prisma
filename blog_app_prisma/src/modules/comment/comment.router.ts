@@ -3,6 +3,10 @@ import auth, { UserRole } from "../../middlewares/auth";
 import { commentController } from "./comment.controller";
 
 const router = Router();
-router.post("/", auth(UserRole.USER), commentController.createComment);
+router.post(
+  "/",
+  auth(UserRole.USER, UserRole.ADMIN),
+  commentController.createComment
+);
 
 export const commentRouter = router;
