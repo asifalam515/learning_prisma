@@ -46,6 +46,39 @@ const getCommentsByAuthor = async (authorId: string) => {
     where: {
       authorId: authorId,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      post: {
+        select: {
+          id: true,
+          title: true,
+        },
+      },
+    },
+  });
+  return result;
+};
+// 1.nijer comment delete korte parbe... login thakte hobe+nijer comment kina check korte hobe
+// 2.admin jekono comment delete korte parbe
+const deleteComment = async (commentId: string, authorId: string) => {
+  const commentData = await prisma.comment.findFirst({
+    where: {
+      id: commentId,
+      authorId,
+    },
+    select: {
+      id: true,
+    },
+  });
+  if (!commentData) {
+    throw new Error("Your Provided Input is invalid!");
+  }
+  const result = await prisma.comment.delete({
+    where: {
+      id: commentData.id,
+    },
   });
   return result;
 };
@@ -53,4 +86,5 @@ export const commentService = {
   createComment,
   getCommentByIdFromDB,
   getCommentsByAuthor,
+  deleteComment,
 };
