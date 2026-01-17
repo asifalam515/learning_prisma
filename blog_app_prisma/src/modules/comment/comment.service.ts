@@ -122,7 +122,16 @@ const moderateComment = async (
     where: {
       id: commentId,
     },
+    select: {
+      id: true,
+      status: true,
+    },
   });
+  if (commentData.status === data.status) {
+    throw new Error(
+      `Your provided status (${data.status}) is already up to date`
+    );
+  }
   const result = await prisma.comment.update({
     where: {
       id: commentId,
