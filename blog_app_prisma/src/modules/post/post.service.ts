@@ -5,7 +5,7 @@ import { CommentStatus, PostStatus } from "./../../../generated/prisma/enums";
 
 const createPostInDb = async (
   data: Omit<Post, "id" | "createdAt" | "updatedAt" | "authorId">,
-  userId: string
+  userId: string,
 ) => {
   const result = await prisma.post.create({
     data: {
@@ -166,6 +166,13 @@ const getMyPostFromDB = async (authorId: string) => {
     },
     orderBy: {
       createdAt: "desc",
+    },
+    include: {
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
     },
   });
   return result;
