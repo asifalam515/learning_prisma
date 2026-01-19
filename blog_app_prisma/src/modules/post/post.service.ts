@@ -160,6 +160,15 @@ const getPostByIdFromDB = async (postId: string) => {
   return result;
 };
 const getMyPostFromDB = async (authorId: string) => {
+  const userInfo = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: authorId,
+      status: "ACTIVE",
+    },
+    select: {
+      id: true,
+    },
+  });
   const result = await prisma.post.findMany({
     where: {
       authorId: authorId,
@@ -175,6 +184,41 @@ const getMyPostFromDB = async (authorId: string) => {
       },
     },
   });
+  // const total = await prisma.post.aggregate({
+  //   _count: {
+  //     id: true,
+  //   },
+  //   where: {
+  //     authorId,
+  //   },
+  // });
+  return result;
+};
+// user - sudu nijer post update korte parbe.isFeatured update korte parbe na
+// admin - sobar post update korte parbe .
+const updateMyPost = async (
+  postId: string,
+  data: Partial<Post>,
+  authorId: string,
+) => {
+  const postData = await prisma.post.findUniqueOrThrow({
+    where: {
+      id: postId,
+    },
+    select: {
+      id: true,
+      authorId: true,
+    },
+  });
+  if (postData.authorId !== authorId) {
+    throw new Error("YOu are not the owner of that post .");
+  }
+  const result = await prisma.post.update({
+    where: {
+      id: postData.id,
+    },
+    data,
+  });
   return result;
 };
 export const postService = {
@@ -182,4 +226,5 @@ export const postService = {
   getPostsFromDB,
   getPostByIdFromDB,
   getMyPostFromDB,
+  updateMyPost,
 };

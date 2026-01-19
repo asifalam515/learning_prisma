@@ -6,14 +6,19 @@ const router = Router();
 router.get(
   "/my-posts",
   auth(UserRole.USER, UserRole.ADMIN),
-  postController.getMyPost
+  postController.getMyPost,
 );
 router.get("/:postId", postController.getPostById);
 router.get("/", postController.getAllPosts);
+router.patch(
+  "/:postId",
+  auth(UserRole.ADMIN, UserRole.USER),
+  postController.updateMyPost,
+);
 router.post(
   "/",
   auth(UserRole.USER, UserRole.ADMIN),
-  postController.createPost
+  postController.createPost,
 );
 
 export const postRouter = router;

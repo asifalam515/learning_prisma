@@ -13,7 +13,7 @@ const createPost = async (req: Request, res: Response) => {
     }
     const result = await postService.createPostInDb(
       req.body,
-      req.user?.id as string
+      req.user?.id as string,
     );
     res.status(201).json(result);
   } catch (error: any) {
@@ -41,8 +41,8 @@ const getAllPosts = async (req: Request, res: Response) => {
         ? req.query.isFeatured === "true"
           ? true
           : req.query.isFeatured === "false"
-          ? false
-          : undefined
+            ? false
+            : undefined
         : undefined;
 
     // pagination
@@ -103,9 +103,32 @@ const getMyPost = async (req: Request, res: Response) => {
     });
   }
 };
+const updateMyPost = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      throw new Error("You are unauthorize!");
+    }
+    const { postId } = req.params;
+    const result = await postService.updateMyPost(
+      postId as string,
+      req.body,
+      user.id,
+    );
+
+    res.status(200).json(result);
+  } catch (error: any) {
+    console.log(error);
+    res.status(400).json({
+      error: "My post Update Failed",
+      details: error,
+    });
+  }
+};
 export const postController = {
   createPost,
   getAllPosts,
   getPostById,
   getMyPost,
+  updateMyPost,
 };
