@@ -3,6 +3,7 @@ import cors from "cors";
 import express, { Application } from "express";
 import { auth } from "./lib/auth";
 import errorHandler from "./middlewares/globalErrorHandler";
+import { notfound } from "./middlewares/notFound";
 import { commentRouter } from "./modules/comment/comment.router";
 import { postRouter } from "./modules/post/post.router";
 
@@ -20,6 +21,7 @@ app.use(
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   }),
 );
+app.use(notfound);
 app.get("/", (req, res) => {
   console.log("project started !!!");
 });

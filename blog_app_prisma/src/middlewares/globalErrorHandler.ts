@@ -30,6 +30,14 @@ function errorHandler(
       statusCode = 400;
       errorMessage = "Foreign key constraint failed";
     }
+  } else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
+    statusCode = 500;
+    errorMessage =
+      "The specific error code is accessible via the .code property of the exception object. You must check this property to determine the exact cause of the error. ";
+  } else if (err instanceof Prisma.PrismaClientRustPanicError) {
+    statusCode = 500;
+    errorMessage =
+      "Prisma Client throws a PrismaClientRustPanicError exception if the underlying engine crashes and exits with a non-zero exit code. In this case, Prisma Client or the whole Node process must be restarted.";
   }
   res.status(statusCode);
   res.json({
