@@ -8,6 +8,7 @@ router.get(
   auth(UserRole.USER, UserRole.ADMIN),
   postController.getMyPost,
 );
+router.get("/stats", auth(UserRole.ADMIN), postController.getStats);
 router.get("/:postId", postController.getPostById);
 router.get("/", postController.getAllPosts);
 router.patch(
