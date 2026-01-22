@@ -5,13 +5,18 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
 }
+
+
+
+
+
+
 enum Role {
   USER
   ADMIN
@@ -30,11 +35,15 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  // relationship
+  books Book[]
+  reviews Review[]
+  comments Comment[]
+  bookmarks Bookmark[]
 
   @@unique([email])
   @@map("user")
 }
-
 model Session {
   id        String   @id
   expiresAt DateTime
@@ -81,4 +90,59 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+model Book {
+  id        String   @id @default(uuid())
+  title     String
+  author    String
+  coverUrl  String?
+  reviews   Review[]
+  userId String
+  user User @relation(fields: [userId],references: [id])
+  createdAt DateTime @default(now())
+}
+model Bookmark {
+  id       String @id @default(uuid())
+  userId   String
+  reviewId String
+  user     User   @relation(fields: [userId], references: [id])
+  review   Review @relation(fields: [reviewId], references: [id])
+
+  @@unique([userId, reviewId])
+}
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  userId    String
+  reviewId  String
+  user      User     @relation(fields: [userId], references: [id])
+  review    Review   @relation(fields: [reviewId], references: [id])
+  createdAt DateTime @default(now())
+}
+model Review {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  rating    Int
+  userId    String
+  bookId    String
+  user      User     @relation(fields: [userId], references: [id])
+  book      Book     @relation(fields: [bookId], references: [id])
+  tags      ReviewTag[]
+  comments  Comment[]
+  createdAt DateTime @default(now())
+  bookmarks Bookmark[]
+}
+model ReviewTag {
+  reviewId String
+  tagId    String
+  review   Review @relation(fields: [reviewId], references: [id])
+  tag      Tag    @relation(fields: [tagId], references: [id])
+
+  @@id([reviewId, tagId])
+}
+model Tag {
+  id     String @id @default(uuid())
+  name   String @unique
+  reviews ReviewTag[]
 }
